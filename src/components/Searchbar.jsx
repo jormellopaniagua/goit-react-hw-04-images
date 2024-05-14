@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import BarStyle from './styledComponents/barStyle';
 
 const Searchbar = ({ onSubmit }) => {
   const [query, setQuery] = useState('');
@@ -13,22 +14,24 @@ const Searchbar = ({ onSubmit }) => {
   };
 
   return (
-    <header className="searchbar">
-      <form className="form" onSubmit={handleSubmit}>
-        <button type="submit" className="button">
-          <span className="button-label">Search</span>
-        </button>
-        <input
-          className="input"
-          type="text"
-          autoComplete="off"
-          autoFocus
-          placeholder="Search images and photos"
-          value={query}
-          onChange={handleChange}
-        />
-      </form>
-    </header>
+    <BarStyle>
+      <header className="searchbar">
+        <form className="form" onSubmit={handleSubmit}>
+          <button type="submit" className="button">
+            <span className="button-label">Search</span>
+          </button>
+          <input
+            className="input"
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+            value={query}
+            onChange={handleChange}
+          />
+        </form>
+      </header>
+    </BarStyle>
   );
 };
 

@@ -5,6 +5,7 @@ import ImageGallery from './ImageGallery';
 import Button from './Button';
 import Loader from './Loader';
 import Modal from './Modal';
+import Page from './styledComponents/page';
 
 const API_KEY = '43149026-ef77b7f6113923fd46a63d2ce';
 
@@ -18,12 +19,15 @@ export const App = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    fetchImages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (query) {
+      fetchImages();
+    }
+    // eslint-disable-next-line
   }, [query, page]);
 
   const fetchImages = async () => {
     setIsLoading(true);
+    setError(null);
 
     try {
       const url = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&page=${page}&image_type=photo&per_page=12`;
@@ -38,8 +42,8 @@ export const App = () => {
     }
   };
 
-  const handleSubmit = newQuery => {
-    setQuery(newQuery);
+  const handleSubmit = query => {
+    setQuery(query);
     setImages([]);
     setPage(1);
   };
@@ -58,16 +62,41 @@ export const App = () => {
     setSelectedImage(null);
   };
 
+  const handlePreviousImageClick = () => {
+    const currentIndex = images.findIndex(
+      img => img.largeImageURL === selectedImage
+    );
+    const previousIndex = (currentIndex - 1 + images.length) % images.length;
+    const previousImage = images[previousIndex].largeImageURL;
+    setSelectedImage(previousImage);
+  };
+
+  const handleNextImageClick = () => {
+    const currentIndex = images.findIndex(
+      img => img.largeImageURL === selectedImage
+    );
+    const nextIndex = (currentIndex + 1) % images.length;
+    const nextImage = images[nextIndex].largeImageURL;
+    setSelectedImage(nextImage);
+  };
+
   return (
-    <div className="App">
+    <Page className="App">
       <Searchbar onSubmit={handleSubmit} />
       {error && <p>Error: {error}</p>}
-      <ImageGallery images={images} onImageClick={handleImageClick} />
+      {images.length > 0 && (
+        <ImageGallery images={images} onImageClick={handleImageClick} />
+      )}
       {isLoading && <Loader />}
       {images.length > 0 && !isLoading && <Button onClick={handleLoadMore} />}
       {showModal && (
-        <Modal imageUrl={selectedImage} onCloseModal={handleCloseModal} />
+        <Modal
+          imageUrl={selectedImage}
+          onCloseModal={handleCloseModal}
+          onPreviousImageClick={handlePreviousImageClick}
+          onNextImageClick={handleNextImageClick}
+        />
       )}
-    </div>
+    </Page>
   );
 };
